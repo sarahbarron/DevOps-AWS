@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import boto3
 import re
-
+import datetime
 """
 
 Author: Sarah Barron
@@ -17,7 +17,6 @@ AWS EC2 key pair methods to:
 - Create a new key pair
 
 """
-
 
 
 """
@@ -55,6 +54,17 @@ def create_new_key_pair(keypair_name):
         else:
             print(error)
 
+
+"""
+
+Method to check if the key pair already exists
+
+"""
+def check_if_keypair_exists(keypair_name):
+    ec2 = boto3.resource('ec2')
+    keypairs = ec2.key_pairs.all()
+    for kp in keypairs:
+        print(kp.name)
 
 """
 
@@ -121,19 +131,43 @@ to the create_new_key_pair method. Return the key_name
 
 """
 def setup_key_pair():
-    bad_key_pair_name = True
-    while (bad_key_pair_name):
-        # Look for input for a key pair name
-        print ("\nkey pair names can be up to 255 characters long. Valid characters include _, -, a-z, A-Z, and 0-9.")
-        print('\n\n Enter a unique key pair name (press enter for default assignment1): ', end='')
-        keypair_name = input()
-        # if the user wants to use a default key pair assign it to the assignment1 with a datetime stamp (avoids duplicates)
-        if len(keypair_name) <= 0:
-            keypair_name = ('assignment1-{:%Y-%m-%d-%H-%M-%S}'.format(datetime.datetime.now()))    
-        # checks for a valid key pair name
-        bad_key_pair_name = check_for_valid_keypair_name(keypair_name)
-    
-    key_name = create_new_key_pair(keypair_name)
-    
-    return key_name
-    
+    try:
+        print("\n-------------------------------------------------------------------------------------")
+        print("  SETUP KEY PAIR")
+        print("\n-------------------------------------------------------------------------------------")
+        
+        invalid_input = True
+
+        while(invalid_input):
+            print("Would you like to use an existitng key-pair (y or n): ", end='')
+            use_existing_keypair = input()
+
+            if use_existing_keypair == 'y' or use_existing_keypair == 'Y':
+                print("Enter the name of key pair you want to use: ", end='')
+                user_input = input()
+                keypair_name = remove_pem_file_extension(user_input)
+                invalid_input = False
+            
+            elif use_existing_keypair == 'n' or use_existing_keypair == 'N':
+        
+                bad_key_pair_name = True
+                while (bad_key_pair_name):
+                    # Look for input for a key pair name
+                    print ("\nkey pair names can be up to 255 characters long. Valid characters include _, -, a-z, A-Z, and 0-9.")
+                    print('\nEnter a unique key pair name (press enter for default assignment1): ', end='')
+                    keypair_name = input()
+                    # if the user wants to use a default key pair assign it to the assignment1 with a datetime stamp (avoids duplicates)
+                    if len(keypair_name) <= 0:
+                        keypair_name = ('assignment1-{:%Y-%m-%d-%H-%M-%S}'.format(datetime.datetime.now()))    
+                    # checks for a valid key pair name
+                    bad_key_pair_name = check_for_valid_keypair_name(keypair_name)
+                    key_name = create_new_key_pair(keypair_name)
+                    invalid_input = False
+            else:
+                print ("Invalid input please enter y or n")
+
+        return keypair_name
+    except Exception as error:
+        print(error)
+
+check_if_keypair_exists("hello")

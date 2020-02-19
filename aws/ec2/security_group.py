@@ -69,6 +69,7 @@ def create_security_group(GroupName, Description):
         )
         # load the security group
         security_group.load()
+
         print("Created Security Group ID : %s"%security_group.id)
         # return the security group id
         return security_group.id
@@ -176,6 +177,10 @@ def setup_security_group():
     group_name_is_duplicate = True
     invalid_regex = True
 
+    print("\n-------------------------------------------------------------------------------------")
+    print("  SETUP SECURITY GROUP")
+    print("\n-------------------------------------------------------------------------------------")
+    
     try:
         
         while (invalid_input):
@@ -201,13 +206,13 @@ def setup_security_group():
             if yes_no == 'y':
                 
                 while invalid_security_group:
-                    print("--------------------------------------------------")
+                    print("\n-------------------------------------------------------------------------------------")
                     print('\nValid Security Group IDs: \n')
 
                     for sg in list_security_groups:
                         print(sg)
                     
-                    print("--------------------------------------------------")
+                    print("\n-------------------------------------------------------------------------------------")
 
                     print('\nFrom the list above enter the ID of the security group you want to use: ', end='')
                     security_group_id = input()
@@ -269,6 +274,7 @@ def setup_security_group():
                         print("The name must only include the following characters:")
                         print("._-:()#,@[\]+=&;{\}!$\* a-z A-Z 0-9 ")
 
+                
                 # once a valid group name and description have been obtained
                 # create the new security group
                 security_group_id = create_security_group(group_name, description)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import boto3
 
-def new_instance(tag_value):
+def new_instance(key_name, security_group_id, tag_value):
     try:
         print("\n-------------------------------------------------------------------------------------")
         print("             CREATING AN EC2 INSTANCE                                                ")
@@ -11,12 +11,12 @@ def new_instance(tag_value):
 
             # Amazon Linux 2 AMI (HVM), SSD Volume Type
             ImageId='ami-099a8245f5daa82bf',
-            KeyName = 'assignment1-keypair',
+            KeyName = key_name,
             MinCount=1,
             MaxCount=1,
             InstanceType='t2.nano',
             # SSH and HTTP
-            SecurityGroupIds=['sg-0225d02f7158ea993'],
+            SecurityGroupIds=[security_group_id],
             # Tags
             TagSpecifications=[{'ResourceType': 'instance', 'Tags': [{'Key':'Name', 'Value':tag_value}]}],
             # Updates to the OS and install, enable and start the webserver apache
