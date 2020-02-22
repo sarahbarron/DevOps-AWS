@@ -3,9 +3,9 @@ import boto3
 
 def new_instance(key_name, security_group_id, tag_value):
     try:
-        print("\n-------------------------------------------------------------------------------------")
-        print("             CREATING AN EC2 INSTANCE                                                ")
-        print("-------------------------------------------------------------------------------------\n")
+        print('\n-------------------------------------------------------------------------------------')
+        print('             CREATING AN EC2 INSTANCE                                                ')
+        print('-------------------------------------------------------------------------------------\n')
         ec2 = boto3.resource('ec2')
         instance = ec2.create_instances(
 
@@ -20,19 +20,21 @@ def new_instance(key_name, security_group_id, tag_value):
             # Tags
             TagSpecifications=[{'ResourceType': 'instance', 'Tags': [{'Key':'Name', 'Value':tag_value}]}],
             # Updates to the OS and install, enable and start the webserver apache
-            UserData = ''' #!/bin/bash
-                        yum update -y
-                        yum install httpd -y
-                        systemct1 enable httpd
-                        systemctl start httpd
+            UserData = '''#!/bin/bash
+yum update -y
+yum install httpd -y
+systemctl enable httpd
+systemctl start httpd
+touch /var/www/html/index.html
+sudo chmod 777 /var/www/html/index.html
                         ''',
             )
         inst = instance[0]
         inst_id = instance[0].id
-        print ("Created Instance ID: %s \n please wait while we get the instance up and running ....\n"% inst_id)
+        print ('Created Instance ID: %s \n please wait while we get the instance up and running ....\n'% inst_id)
         inst.wait_until_running()
         inst.reload()
-        print ("Thank you for waiting Instance ID: %s is now running \n"% inst_id)
+        print ('Thank you for waiting Instance ID: %s is now running \n'% inst_id)
         return inst
     except Exception as error:
             print (error)

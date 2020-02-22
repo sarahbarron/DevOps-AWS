@@ -2,7 +2,7 @@
 import boto3
 import re
 import datetime
-"""
+'''
 
 Author: Sarah Barron
 College: Waterford Institute of Technology
@@ -12,17 +12,17 @@ Assingment 1.
 
 AWS EC2 key pair methods to create, validate, return or use existing key pairs
 
-"""
+'''
 
 
 ec2 = boto3.resource('ec2')
 
 
-"""
+'''
 
 Method to create a new key pair
 
-"""
+'''
 def create_new_key_pair(keypair_name):
     try:
         key_name = get_key_name(keypair_name)
@@ -41,8 +41,8 @@ def create_new_key_pair(keypair_name):
         return key_name
 
     except Exception as error:
-        if "(InvalidKeyPair.Duplicate)" in str(error):
-            print ("\n %s this keypair already exists and will be used again to create this instance" %(keypair_name))
+        if '(InvalidKeyPair.Duplicate)' in str(error):
+            print ('\n %s this keypair already exists and will be used again to create this instance' %(keypair_name))
             return key_name
         else:
             print(error)
@@ -52,11 +52,11 @@ def create_new_key_pair(keypair_name):
 
 
 
-"""
+'''
 
 Method Counts the number of existing keypairs
 
-"""
+'''
 def count_existing_keypairs():
     
     existing_key_pair_list = ec2.key_pairs.all()
@@ -71,32 +71,32 @@ def count_existing_keypairs():
 
 
 
-"""
+'''
 
 Method Prints a list of exisiting key pairs
 
-"""
+'''
 def print_exisiting_keypairs():
     existing_key_pair_list = ec2.key_pairs.all()
-    print("\n-------------------------------------------------------------------------------------")
-    print(" Existing Key Pairs")
-    print("\n-------------------------------------------------------------------------------------")
+    print('\n-------------------------------------------------------------------------------------')
+    print(' Existing Key Pairs')
+    print('\n-------------------------------------------------------------------------------------')
     for kp in existing_key_pair_list:
         print(kp.name)
-    print("\n-------------------------------------------------------------------------------------")
+    print('\n-------------------------------------------------------------------------------------')
 
 
 
 
 
-"""
+'''
 
 Method to check if the key pair entered by the user is a duplicate
 If it is a duplicate the original key pair name is returned
 as it is an exact match (case sensitive)
 otherwise return the string duplicate! (use ! as this can not be in a key pair name) 
 
-"""
+'''
 def check_if_keypair_is_duplicate(user_input):
 
     existing_key_pair_list = ec2.key_pairs.all()
@@ -109,18 +109,18 @@ def check_if_keypair_is_duplicate(user_input):
         if kp_lower == user_input_lower:
             return kp.name
 
-    return "duplicate!"
+    return 'duplicate!'
 
 
 
 
 
 
-"""
+'''
 
 Function to check a users input for using an existing keypair is correct
 
-"""
+'''
 def check_input_is_in_keypair_list(user_input):
     
     existing_key_pair_list = ec2.key_pairs.all()
@@ -134,24 +134,24 @@ def check_input_is_in_keypair_list(user_input):
         if kp_lower == user_input_lower:
             return kp.name
 
-    return "DOES NOT EXIST!"
+    return 'DOES NOT EXIST!'
 
 
 
 
 
-"""
+'''
 
 Check for a vaild keypair name using regex
 
-"""
+'''
 def check_keypair_regex(user_input):
     try:
         if re.search(r'^[_\-a-zA-Z0-9]{1,255}\.pem$', user_input) or re.search(r'^[_\-a-zA-Z0-9]{1,255}$', user_input):
             return False
         
         else:
-            print("\n Invalid key pair Name \n")
+            print('\n Invalid key pair Name \n')
             return True
     except Exception as error:
         print(error)
@@ -160,12 +160,12 @@ def check_keypair_regex(user_input):
 
 
 
-"""
+'''
 
 This method takes a keypair name and seperates the key name from the file name
 and returns the keyname
 
-"""
+'''
 def get_key_name(keypair):
     try:
         if re.search(r'\.pem$', keypair):
@@ -181,16 +181,16 @@ def get_key_name(keypair):
 
 
 
-"""
+'''
 
 Setup Key Pair Method
 
-"""
+'''
 def setup_keypair_name():
     try:
-        print("\n-------------------------------------------------------------------------------------")
-        print("  SETUP KEY PAIR")
-        print("\n-------------------------------------------------------------------------------------")
+        print('\n-------------------------------------------------------------------------------------')
+        print('  SETUP KEY PAIR')
+        print('\n-------------------------------------------------------------------------------------')
             
         outer_invalid_input = True
 
@@ -201,7 +201,7 @@ def setup_keypair_name():
             # If there are no exisiting keypairs move on to create an instance
             num_existing_keypairs = count_existing_keypairs()
             if num_existing_keypairs > 0:
-                print("\nWould you like to use an existing key pair (y or n): ", end='')
+                print('\nWould you like to use an existing key pair (y or n): ', end='')
                 use_existing_kp = input()
             else:
                 use_existing_kp = 'n'
@@ -217,7 +217,7 @@ def setup_keypair_name():
                     # Print the available key pairs
                     print_exisiting_keypairs()
             
-                    print ("\nEnter the name of the keypair you want to use from the list: ", end='')
+                    print ('\nEnter the name of the keypair you want to use from the list: ', end='')
                     user_input = input()
                    
                     # If the user has entered .pem remove it 
@@ -226,8 +226,8 @@ def setup_keypair_name():
                     # check the user has entered the correct key pair name 
                     keypair_name = check_input_is_in_keypair_list(keypair_name)
                   
-                    # if the user hasn't entered the correct keypair name the string "DOES NOT EXIST!" is returned
-                    if keypair_name == "DOES NOT EXIST!":
+                    # if the user hasn't entered the correct keypair name the string 'DOES NOT EXIST!' is returned
+                    if keypair_name == 'DOES NOT EXIST!':
                         print('\nYou have entered an incorrect key pair name\n')
                     # if the user has entered a correct key pair name exit and return the keypair name
                     else:
@@ -245,7 +245,7 @@ def setup_keypair_name():
                     # Get user input for a key pair name and check the regex is correct
                     while bad_keypair_name:
 
-                        print ("\nkey pair names can be up to 255 characters long. Valid characters include _ - a-z A-Z and 0-9")
+                        print ('\nkey pair names can be up to 255 characters long. Valid characters include _ - a-z A-Z and 0-9')
                         print('\nEnter a unique key pair name (press enter for a default name): ', end='')
                         user_input = input()
                         
@@ -263,7 +263,7 @@ def setup_keypair_name():
                         existing_keypair_name = check_input_is_in_keypair_list(keypair_name)
                         
                         # If the user input doesn't exist already create a new key pair
-                        if existing_keypair_name == "DOES NOT EXIST!":
+                        if existing_keypair_name == 'DOES NOT EXIST!':
                             already_exists = False
                             inner_invalid_input = False
                             outer_invalid_input = False
@@ -293,10 +293,10 @@ def setup_keypair_name():
                                 
                                 # otherwise the input has been invalid so print this message
                                 else:
-                                    print("Invalid input you must enter y or n")
+                                    print('Invalid input you must enter y or n')
 
             else:
-                print ("Invalid input please enter y or n")
+                print ('Invalid input please enter y or n')
 
         print('keypair name being used: %s' % keypair_name)
         return keypair_name

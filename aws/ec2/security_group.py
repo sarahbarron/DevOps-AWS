@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""
+'''
 Author: Sarah Barron
 College: Waterford Institute of Technology
 Course: HDip Computer Science
@@ -14,7 +14,7 @@ AWS EC2 Security Group Methods
 ~ To check if the user inputs a unique name for a security group
 ~ To check that the user has inputted a valid group name and description
 
-"""
+'''
 
 import boto3
 import time
@@ -22,12 +22,12 @@ import re
 
 ec2 = boto3.resource('ec2')
 
-"""
+'''
 Create a security group with user input group name and description passed
 to the method.
 Set the security group up with SSH, HTTP and HTTPS inbound access
 Return the security group ID
-"""
+'''
 def create_security_group(GroupName, Description):
     try:
         # Create the security group
@@ -70,19 +70,19 @@ def create_security_group(GroupName, Description):
         # load the security group
         security_group.load()
 
-        print("Created Security Group ID : %s"%security_group.id)
+        print('Created Security Group ID : %s'%security_group.id)
         # return the security group id
         return security_group.id
     except Exception as error:
         print (error)
 
 
-"""
+'''
 Find all available security groups that can be used to create 
 the instance. The Security group must have SSH inbound access
 and belong to the default vpc
 Returns a list of all valid security groups
-"""
+'''
 
 def find_available_security_groups():
     try:
@@ -119,10 +119,10 @@ def find_available_security_groups():
     except Exception as error:
         print (error)
 
-"""
+'''
 Check if the user has inputted a duplicate group name
 Returns True if it is a duplicate or False if it is unique
-"""
+'''
 
 def check_for_duplicate_security_group_name(name):
     security_group_list = []
@@ -148,10 +148,10 @@ def check_for_duplicate_security_group_name(name):
         print (error)
 
 
-"""
+'''
 A function to check if the user has inputted a group name or description 
 with valid characters, using regex
-"""
+'''
 
 def check_regex(input):
     try:
@@ -163,11 +163,11 @@ def check_regex(input):
     except Exception as error:
         print(error)
 
-"""
+'''
 Method to look for user input for a group name and description
 Once the user enters valid input the security group is created
 and the method returns the security group ID
-"""
+'''
 def setup_security_group():
 
     invalid_input = True
@@ -177,9 +177,9 @@ def setup_security_group():
     group_name_is_duplicate = True
     invalid_regex = True
 
-    print("\n-------------------------------------------------------------------------------------")
-    print("  SETUP SECURITY GROUP")
-    print("\n-------------------------------------------------------------------------------------")
+    print('\n-------------------------------------------------------------------------------------')
+    print('  SETUP SECURITY GROUP')
+    print('\n-------------------------------------------------------------------------------------')
     
     try:
         
@@ -206,13 +206,13 @@ def setup_security_group():
             if yes_no == 'y':
                 
                 while invalid_security_group:
-                    print("\n-------------------------------------------------------------------------------------")
+                    print('\n-------------------------------------------------------------------------------------')
                     print('\nValid Security Group IDs: \n')
 
                     for sg in list_security_groups:
                         print(sg)
                     
-                    print("\n-------------------------------------------------------------------------------------")
+                    print('\n-------------------------------------------------------------------------------------')
 
                     print('\nFrom the list above enter the ID of the security group you want to use: ', end='')
                     security_group_id = input()
@@ -255,8 +255,8 @@ def setup_security_group():
                     # check if the regex of the group name is invalid
                     invalid_regex = check_regex(group_name)
                     if invalid_regex:
-                        print("The name must only include the following characters:")
-                        print("._-:()#,@[\]+=&;{\}!$\* a-z A-Z 0-9 ")
+                        print('The name must only include the following characters:')
+                        print('._-:()#,@[\]+=&;{\}!$\* a-z A-Z 0-9 ')
                     
                     
                 # reset invalid_regex back to true to check the description regex    
@@ -271,8 +271,8 @@ def setup_security_group():
                     # check if the descriptions regex is invalid
                     invalid_regex = check_regex(description)
                     if invalid_regex:
-                        print("The name must only include the following characters:")
-                        print("._-:()#,@[\]+=&;{\}!$\* a-z A-Z 0-9 ")
+                        print('The name must only include the following characters:')
+                        print('._-:()#,@[\]+=&;{\}!$\* a-z A-Z 0-9 ')
 
                 
                 # once a valid group name and description have been obtained
