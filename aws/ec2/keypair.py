@@ -2,6 +2,7 @@
 import boto3
 import re
 import datetime
+import subprocess
 '''
 
 Author: Sarah Barron
@@ -29,7 +30,7 @@ def create_new_key_pair(keypair_name):
               
         # create a file to store the key locally
         keypair_file = open('./%s.pem' %key_name, 'w')
-
+        
         # create the key pair
         key_pair = ec2.create_key_pair(KeyName = key_name)
         
@@ -299,6 +300,7 @@ def setup_keypair_name():
                 print ('Invalid input please enter y or n')
 
         print('keypair name being used: %s' % keypair_name)
+        
         return keypair_name
     except Exception as error:
             print(error)
