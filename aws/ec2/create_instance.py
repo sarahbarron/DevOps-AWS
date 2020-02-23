@@ -36,5 +36,5 @@ sudo chmod 777 /var/www/html/index.html
         inst.reload()
         print ('Thank you for waiting Instance ID: %s is now running \n'% inst_id)
         return inst
-    except Exception as error:
+    except (Exception, KeyboardInterrupt) as error:
             print (error)

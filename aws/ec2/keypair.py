@@ -37,11 +37,12 @@ def create_new_key_pair(keypair_name):
         # capture the key and store it in the file
         KeyPairOut = str(key_pair.key_material)
         keypair_file.write(KeyPairOut)
-        
+        # For security reasons the keypair pem file must not be accessable externally
+        subprocess.run('chmod 400 ./%s.pem'%key_name, shell=True)        
         # return the key name
         return key_name
 
-    except Exception as error:
+    except (Exception, KeyboardInterrupt) as error:
         if '(InvalidKeyPair.Duplicate)' in str(error):
             print ('\n %s this keypair already exists and will be used again to create this instance' %(keypair_name))
             return key_name
@@ -154,7 +155,7 @@ def check_keypair_regex(user_input):
         else:
             print('\n Invalid key pair Name \n')
             return True
-    except Exception as error:
+    except (Exception, KeyboardInterrupt) as error:
         print(error)
 
 
@@ -175,7 +176,7 @@ def get_key_name(keypair):
         else:
             return keypair
         
-    except Exception as error:
+    except (Exception, KeyboardInterrupt) as error:
         print(error)
 
 
@@ -302,5 +303,5 @@ def setup_keypair_name():
         print('keypair name being used: %s' % keypair_name)
         
         return keypair_name
-    except Exception as error:
+    except (Exception, KeyboardInterrupt) as error:
             print(error)

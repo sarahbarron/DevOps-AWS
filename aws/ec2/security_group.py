@@ -73,7 +73,7 @@ def create_security_group(GroupName, Description):
         print('Created Security Group ID : %s'%security_group.id)
         # return the security group id
         return security_group.id
-    except Exception as error:
+    except (Exception, KeyboardInterrupt) as error:
         print (error)
 
 
@@ -116,7 +116,7 @@ def find_available_security_groups():
 
         # return a list of security group objects
         return security_group_list
-    except Exception as error:
+    except (Exception, KeyboardInterrupt) as error:
         print (error)
 
 '''
@@ -144,7 +144,7 @@ def check_for_duplicate_security_group_name(name):
         # if the user group name is not in the security group name list
         # return false
         return False
-    except Exception as error:
+    except (Exception, KeyboardInterrupt) as error:
         print (error)
 
 
@@ -160,7 +160,7 @@ def check_regex(input):
         
         else:
             return True
-    except Exception as error:
+    except (Exception, KeyboardInterrupt) as error:
         print(error)
 
 '''
@@ -288,5 +288,5 @@ def setup_security_group():
         
         # return the security groups ID
         return security_group_id
-    except Exception as error:
+    except (Exception, KeyboardInterrupt) as error:
         print (error)
