@@ -15,6 +15,8 @@ def new_instance(key_name, security_group_id, tag_value):
             MinCount=1,
             MaxCount=1,
             InstanceType='t2.nano',
+            # Only use Monitoring if needed this will cost more to run
+            Monitoring={'Enabled':True},
             # SSH and HTTP
             SecurityGroupIds=[security_group_id],
             # Tags
@@ -31,7 +33,7 @@ sudo chmod 777 /var/www/html/index.html
             )
         inst = instance[0]
         inst_id = instance[0].id
-        print ('Created Instance ID: %s \n please wait while we get the instance up and running this could take a few minutes....\n'% inst_id)
+        print ('Instance ID (Note: Save this ID as you will need it for monitoring): %s \n please wait while we get the instance up and running this could take a few minutes....\n'% inst_id)
         inst.wait_until_running()
         inst.reload()
         print ('Thank you for waiting Instance ID: %s is now running \n'% inst_id)

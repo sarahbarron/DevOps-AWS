@@ -11,6 +11,8 @@ import re
 import webpage
 from check_for_exit import checkForExit
 import sys
+import time
+
 try:
     subprocess.run('clear')
     
@@ -68,8 +70,32 @@ try:
     # Create a bucket and put an image inside the bucket
     bucket_details = aws.s3.create_bucket.setup_s3_bucket(default)
 
-    webpage.create_index_html_page(key_name, public_ip_address, bucket_details)
     
+    print("Would you like to wait for 5 minutes for monitoring to start (y or n or exit): ", end='')
+    user_input = input()
+    checkForExit(user_input)
+
+    invalid_input = True
+    while invalid_input:
+        if user_input == 'y' or user_input == 'Y':
+            print('Great come back in 5 minutes to see your monitor readings .....')
+            print('\nWhile we are waiting for monitor results to be returned we will create your webpage')
+             # send data to create the webpage
+            webpage.create_index_html_page(key_name, public_ip_address, bucket_details)
+
+            time.sleep(260)
+            subprocess.run('./monitor.py %s'%instance.id, shell=True)
+            invalid_input= False
+        if user_input == 'n' or user_input == 'N':
+            print ("\nYou can monitor your Instance at any time using your Instance ID: %s"%instance.id)
+            print("by running the following command in the root directory of the program:\n")
+            print("./monitor.py %s" %instance.id)    
+            print("\nCreating your webpage now")
+             # send data to create the webpage
+            webpage.create_index_html_page(key_name, public_ip_address, bucket_details)
+
+    
+
 except (Exception) as error:
             print (error)
 except(KeyboardInterrupt):
