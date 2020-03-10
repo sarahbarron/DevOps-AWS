@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import boto3
-
+import sys
 def new_instance(key_name, security_group_id, tag_value):
     try:
         print('\n-------------------------------------------------------------------------------------')
@@ -31,10 +31,12 @@ sudo chmod 777 /var/www/html/index.html
             )
         inst = instance[0]
         inst_id = instance[0].id
-        print ('Created Instance ID: %s \n please wait while we get the instance up and running ....\n'% inst_id)
+        print ('Created Instance ID: %s \n please wait while we get the instance up and running this could take a few minutes....\n'% inst_id)
         inst.wait_until_running()
         inst.reload()
         print ('Thank you for waiting Instance ID: %s is now running \n'% inst_id)
         return inst
-    except (Exception, KeyboardInterrupt) as error:
+    except (Exception) as error:
             print (error)
+    except(KeyboardInterrupt):
+        sys.exit("\n\nProgram exited by keyboard interupt")

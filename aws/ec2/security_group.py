@@ -1,3 +1,5 @@
+import datetime
+import sys
 #!/usr/bin/env python3
 '''
 Author: Sarah Barron
@@ -19,6 +21,7 @@ AWS EC2 Security Group Methods
 import boto3
 import time
 import re
+from check_for_exit import checkForExit
 
 ec2 = boto3.resource('ec2')
 
@@ -70,11 +73,13 @@ def create_security_group(GroupName, Description):
         # load the security group
         security_group.load()
 
-        print('Created Security Group ID : %s'%security_group.id)
+        print('\nCreated Security Group ID : %s'%security_group.id)
         # return the security group id
         return security_group.id
-    except (Exception, KeyboardInterrupt) as error:
+    except (Exception) as error:
         print (error)
+    except(KeyboardInterrupt):
+        sys.exit("\n\nProgram exited by keyboard interupt")
 
 
 '''
@@ -116,8 +121,10 @@ def find_available_security_groups():
 
         # return a list of security group objects
         return security_group_list
-    except (Exception, KeyboardInterrupt) as error:
+    except (Exception) as error:
         print (error)
+    except(KeyboardInterrupt):
+        sys.exit("\n\nProgram exited by keyboard interupt")
 
 '''
 Check if the user has inputted a duplicate group name
@@ -144,8 +151,10 @@ def check_for_duplicate_security_group_name(name):
         # if the user group name is not in the security group name list
         # return false
         return False
-    except (Exception, KeyboardInterrupt) as error:
+    except (Exception) as error:
         print (error)
+    except(KeyboardInterrupt):
+        sys.exit("\n\nProgram exited by keyboard interupt")
 
 
 '''
@@ -160,8 +169,10 @@ def check_regex(input):
         
         else:
             return True
-    except (Exception, KeyboardInterrupt) as error:
+    except (Exception) as error:
         print(error)
+    except(KeyboardInterrupt):
+        sys.exit("\n\nProgram exited by keyboard interupt")
 
 '''
 Method to look for user input for a group name and description
@@ -183,6 +194,7 @@ def setup_security_group():
     
     try:
         
+        print("\n YOU CAN ENTER EXIT AT ANY STAGE TO EXIT THE PROGRAM\n\n")
         while (invalid_input):
 
             # returns a list off valid security groups
@@ -193,9 +205,9 @@ def setup_security_group():
             # if there is a valid security group available ask the user do they want to 
             # use an existing security group 
             if len(list_security_groups) > 0:
-                print('Do you want to use an existing security group (y/n)', end='')
+                print('Do you want to use an existing security group (y/n or enter to use default)', end='')
                 yes_no = input()
-                
+                checkForExit(yes_no)
 
             # if there are no valid security groups available go direct to creating one
             else:
@@ -216,6 +228,8 @@ def setup_security_group():
 
                     print('\nFrom the list above enter the ID of the security group you want to use: ', end='')
                     security_group_id = input()
+                    checkForExit(security_group_id)
+
                     # if the user enters a valid security group exit the loop
                     if security_group_id in list_security_groups:                            
                         invalid_input = False 
@@ -243,8 +257,12 @@ def setup_security_group():
                     # the user will be asked to enter another group name
                     while (group_name_is_duplicate):
                     
-                        print('Enter A Group Name: ', end='')
+                        print('Enter A Group Name (or press enter to use default): ', end='')
                         group_name = input()
+                        checkForExit(group_name)
+
+                        if len(group_name)<=0:
+                            group_name = ('assignment1-security-group-{:%Y-%m-%d-%H-%M-%S}'.format(datetime.datetime.now()))
 
                         # check if the entered group name is a duplicate
                         group_name_is_duplicate = check_for_duplicate_security_group_name(group_name)
@@ -265,8 +283,12 @@ def setup_security_group():
                 # Continue to loop until the user enters a description with correct regex
                 while(invalid_regex):
                     
-                    print('Enter A Description: ', end='')
+                    print('Enter A Description (or press enter to use default): ', end='')
                     description = input()
+                    checkForExit(description)
+
+                    if len(description) <=0:
+                        description = "Assignment One Security Group"
                     
                     # check if the descriptions regex is invalid
                     invalid_regex = check_regex(description)
@@ -281,12 +303,24 @@ def setup_security_group():
                 # exit the loop
                 invalid_input = False
             
+            elif yes_no == '':
+                security_group_id = setup_default_security_group()
+                invalid_input = False
+
             # if the user doesn't enter y or n if asked do they want to use  
             # an existing security group
             else:
-                print('Your input is invalid please enter y or n \n\n')
+                print('Your input is invalid please enter y or n or enter for default values \n\n')
         
         # return the security groups ID
         return security_group_id
-    except (Exception, KeyboardInterrupt) as error:
+    except (Exception) as error:
         print (error)
+    except(KeyboardInterrupt):
+        sys.exit("\n\nProgram exited by keyboard interupt")
+
+def setup_default_security_group():
+    group_name = ('assignment1-security-group-{:%Y-%m-%d-%H-%M-%S}'.format(datetime.datetime.now()))
+    description = "Assignment One Security Group"
+    security_group_id = create_security_group(group_name, description)
+    return security_group_id

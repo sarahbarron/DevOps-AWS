@@ -24,7 +24,7 @@ def create_index_html_page(key_name, public_ip_address, bucket_name):
         print('-------------------------------------------------------------------------------------\n')
 
         image_html = "\'echo \"<img src=\"https://%s.s3-eu-west-1.amazonaws.com/image.jpg\" \
-            alt=\"Image from s3 bucket %s unavailable\">\" >> index.html\'" %bucket_name
+            alt=\"Image from s3 bucket unavailable\">\" >> index.html\'" %bucket_name
 
     
         subprocess.run("ssh -o StrictHostKeyChecking=no -i %s.pem ec2-user@%s \
@@ -64,7 +64,7 @@ def create_index_html_page(key_name, public_ip_address, bucket_name):
             
             apache_not_running = False
             if apache_num == '2\n':
-                print("Trying to connect to server......")
+                print("Connecting to server please wait this can take a few minutes ......")
                 apache_not_running = True
             else:
                 apache_not_running = False

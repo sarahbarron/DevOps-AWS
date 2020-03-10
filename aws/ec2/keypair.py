@@ -3,6 +3,8 @@ import boto3
 import re
 import datetime
 import subprocess
+from check_for_exit import checkForExit
+import sys 
 '''
 
 Author: Sarah Barron
@@ -42,12 +44,14 @@ def create_new_key_pair(keypair_name):
         # return the key name
         return key_name
 
-    except (Exception, KeyboardInterrupt) as error:
+    except (Exception) as error:
         if '(InvalidKeyPair.Duplicate)' in str(error):
             print ('\n %s this keypair already exists and will be used again to create this instance' %(keypair_name))
             return key_name
         else:
             print(error)
+    except(KeyboardInterrupt):
+        sys.exit("\n\nProgram exited")
 
 
 
@@ -155,8 +159,10 @@ def check_keypair_regex(user_input):
         else:
             print('\n Invalid key pair Name \n')
             return True
-    except (Exception, KeyboardInterrupt) as error:
+    except (Exception) as error:
         print(error)
+    except(KeyboardInterrupt):
+        sys.exit("\n\nProgram exited by keyboard interupt")
 
 
 
@@ -176,8 +182,10 @@ def get_key_name(keypair):
         else:
             return keypair
         
-    except (Exception, KeyboardInterrupt) as error:
+    except (Exception) as error:
         print(error)
+    except(KeyboardInterrupt):
+        sys.exit("\n\nProgram exited by keyboard interupt")
 
 
 
@@ -197,14 +205,15 @@ def setup_keypair_name():
         outer_invalid_input = True
 
         while(outer_invalid_input):
-
+            print ('\n YOU CAN ENTER EXIT AT ANY STAGE TO EXIT THE PROGRAM \n\n')
             # If there are exisiting keypairs available ask the user would they like to 
             # use an existing key pair
             # If there are no exisiting keypairs move on to create an instance
             num_existing_keypairs = count_existing_keypairs()
             if num_existing_keypairs > 0:
-                print('\nWould you like to use an existing key pair (y or n): ', end='')
+                print('\nWould you like to use an existing key pair (y or n or press enter for default value): ', end='')
                 use_existing_kp = input()
+                checkForExit(use_existing_kp)
             else:
                 use_existing_kp = 'n'
             
@@ -221,7 +230,7 @@ def setup_keypair_name():
             
                     print ('\nEnter the name of the keypair you want to use from the list: ', end='')
                     user_input = input()
-                   
+                    checkForExit(user_input)
                     # If the user has entered .pem remove it 
                     keypair_name = get_key_name(user_input)
                 
@@ -250,10 +259,10 @@ def setup_keypair_name():
                         print ('\nkey pair names can be up to 255 characters long. Valid characters include _ - a-z A-Z and 0-9')
                         print('\nEnter a unique key pair name (press enter for a default name): ', end='')
                         user_input = input()
-                        
+                        checkForExit(user_input)
                         # if the user does not enter anything use the default key name assignment1 appended with a date stamp
                         if len(user_input)<=0:
-                            keypair_name = ('assignment1-{:%Y-%m-%d-%H-%M-%S}'.format(datetime.datetime.now()))
+                            user_input = ('kp-assignment1-{:%Y-%m-%d-%H-%M-%S}'.format(datetime.datetime.now()))
                         
                         keypair_name = get_key_name(user_input)
                         bad_keypair_name = check_keypair_regex(keypair_name)
@@ -279,7 +288,7 @@ def setup_keypair_name():
                                 print('The key pair name you have entered already exists')
                                 print('would you like to use the existing key pair y or n?', end='')
                                 user_input = input()
-
+                                checkForExit(use_existing_kp)
                                 # If the user chooses to use the existing one exit loops and return the keypair_name
                                 if user_input == 'y' or user_input == 'Y':
                                     invalid_input = False
@@ -297,11 +306,31 @@ def setup_keypair_name():
                                 else:
                                     print('Invalid input you must enter y or n')
 
+            # If user enters enter use the default value
+            elif use_existing_kp == '' or use_existing_kp == '':                       
+                keypair_name = ('kp-assignment1-{:%Y-%m-%d-%H-%M-%S}'.format(datetime.datetime.now()))  
+                name = get_key_name(keypair_name)
+                keypair_name = create_new_key_pair(name)
+                outer_invalid_input = False
+
             else:
                 print ('Invalid input please enter y or n')
 
         print('keypair name being used: %s' % keypair_name)
         
         return keypair_name
-    except (Exception, KeyboardInterrupt) as error:
+    except (Exception) as error:
             print(error)
+    except(KeyboardInterrupt):
+        sys.exit("\n\nProgram exited by keyboard intereupt")
+
+
+def setup_default_keypair():
+    try:
+        name = ('kp-assignment1-{:%Y-%m-%d-%H-%M-%S}'.format(datetime.datetime.now()))  
+        keypair_name = create_new_key_pair(name)
+        return keypair_name
+    except (Exception) as error:
+            print(error)
+    except(KeyboardInterrupt):
+        sys.exit("\n\nProgram exited by keyboard intereupt")
