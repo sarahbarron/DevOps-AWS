@@ -52,7 +52,7 @@ while not (valid_instance):
     valid_instance = check_for_valid_instance_id(instid)
 
 instance = ec2.Instance(instid)
-print('Instance retrieved %s'%instance)
+print('Instance retrieved %s\n'%instance.id)
 instance.monitor()       # Enables detailed monitoring on instance (1-minute intervals)
 
 
@@ -61,26 +61,52 @@ metric_iterator = cloudwatch.metrics.filter(Namespace='AWS/EC2',
                                             Dimensions=[{'Name':'InstanceId', 'Value': instid}])
 
 metric = list(metric_iterator)[0]    # extract first (only) element
-print(metric)
+
 response = metric.get_statistics(StartTime = datetime.utcnow() - timedelta(minutes=5),   # 5 minutes ago
                                  EndTime=datetime.utcnow(),                              # now
                                  Period=300,                                             # 5 min intervals
-                                 Statistics=['Average'])
+                                 Statistics=['Average', 'Maximum', 'Minimum'])
 
-responseMax = metric.get_statistics(StartTime = datetime.utcnow() - timedelta(minutes=5),   # 5 minutes ago
+print("Time: ", response['Datapoints'][0]['Timestamp'])
+
+print ("\nCPU UTILISATION (over the last 5 minutes)")
+print ("\nMaximum CPU utilisation was:", response['Datapoints'][0]['Maximum'], response['Datapoints'][0]['Unit'])
+print ("Maximum CPU utilisation was:", response['Datapoints'][0]['Minimum'], response['Datapoints'][0]['Unit'])
+print ("Average CPU utilisation:", response['Datapoints'][0]['Average'], response['Datapoints'][0]['Unit'])
+
+
+network_in_iterator = cloudwatch.metrics.filter(Namespace='AWS/EC2',
+                                            MetricName='NetworkIn',
+                                            Dimensions=[{'Name':'InstanceId', 'Value': instid}])
+network_in  = list(network_in_iterator)[0]
+
+response = network_in.get_statistics(StartTime = datetime.utcnow() - timedelta(minutes=5),   # 5 minutes ago
                                  EndTime=datetime.utcnow(),                              # now
-                                 Period=300,                                             # 5 min intervals
-                                 Statistics=['Maximum'])
+                                 Period=300,
+                                 Statistics=['Maximum', 'Minimum', 'Sum', 'Average'])
+print("\n\nNETWORK IN (over the last 5 minutes)")
+print ("\nMaximum Bytes received: ", response['Datapoints'][0]['Maximum'], response['Datapoints'][0]['Unit'])
+print ("Minimum Bytes received: ", response['Datapoints'][0]['Minimum'], response['Datapoints'][0]['Unit'])
+print ("Average Bytes Received: ", response['Datapoints'][0]['Average'], response['Datapoints'][0]['Unit'])
+print ("Total   Bytes received: ", response['Datapoints'][0]['Sum'], response['Datapoints'][0]['Unit'])
 
-responseMin = metric.get_statistics(StartTime = datetime.utcnow() - timedelta(minutes=5),   # 5 minutes ago
+network_out_iterator = cloudwatch.metrics.filter(Namespace='AWS/EC2',
+                                            MetricName='NetworkOut',
+                                            Dimensions=[{'Name':'InstanceId', 'Value': instid}])
+network_out  = list(network_out_iterator)[0]
+
+response = network_out.get_statistics(StartTime = datetime.utcnow() - timedelta(minutes=5),   # 5 minutes ago
                                  EndTime=datetime.utcnow(),                              # now
-                                 Period=300,                                             # 5 min intervals
-                                 Statistics=['Minimum'])
+                                 Period=300,
+                                 Statistics=['Maximum', 'Minimum', 'Sum', 'Average'])
+print("\n\nNETWORK OUT (over the last 5 minutes)")
+print ("\nMaximum Bytes sent: ", response['Datapoints'][0]['Maximum'], response['Datapoints'][0]['Unit'])
+print ("Minimum Bytes sent: ", response['Datapoints'][0]['Minimum'], response['Datapoints'][0]['Unit'])
+print ("Average Bytes sent: ", response['Datapoints'][0]['Average'], response['Datapoints'][0]['Unit'])
+print ("Total   Bytes sent: ", response['Datapoints'][0]['Sum'], response['Datapoints'][0]['Unit'])
 
 
-print ("\nAverage CPU utilisation:", response['Datapoints'][0]['Average'], response['Datapoints'][0]['Unit'])
-print ("\nMaximum CPU utilisation was:", responseMax['Datapoints'][0]['Maximum'], responseMax['Datapoints'][0]['Unit']," @ ", response['Datapoints'][0]['Timestamp'])
-print ("\nMaximum CPU utilisation was:", responseMin['Datapoints'][0]['Minimum'], responseMax['Datapoints'][0]['Unit']," @ ", response['Datapoints'][0]['Timestamp'])
+
 
 
 
