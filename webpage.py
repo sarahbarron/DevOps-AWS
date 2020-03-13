@@ -78,7 +78,9 @@ def create_index_html_page(key_name, public_ip_address, bucket_name):
          
         else: 
             subprocess.run("ssh -o StrictHostKeyChecking=no -i %s.pem ec2-user@%s 'cp -f index.html /var/www/html/index.html'" %(key_name, public_ip_address) , shell=True)
-            subprocess.run(["xdg-open", "http://%s"%public_ip_address])
+            # subprocess.run(["xdg-open", "http://%s"%public_ip_address])
+            subprocess.run(["firefox", "http://%s"%public_ip_address])
+
                
                       
     except (Exception, KeyboardInterrupt) as error:

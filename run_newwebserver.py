@@ -20,9 +20,9 @@ try:
     print("AWS EC2 and S3 Bucket")
     print("\n You can enter exit at any stage to exit the program early")
     print('\n-------------------------------------------------------------------------------------')
-   
+
     invalid_input = True
-    
+
     while(invalid_input):
         print("\n Would you like to use the default values to setup the EC2 and S3 Bucket (y or n): ", end='')
         user_input = input()
@@ -69,7 +69,11 @@ try:
 
     # Create a bucket and put an image inside the bucket
     bucket_details = aws.s3.create_bucket.setup_s3_bucket(default)
-
+    webpage.create_index_html_page(key_name, public_ip_address, bucket_details)
+    # sleep for 2 mins to set up an alarm
+    print("Please wait for 2 minutes while we set up an alarm to terminate inactive instances ...")
+    time.sleep(150)
+    aws.ec2.create_instance.setup_low_cpu_alarm(instance.id)
     
     print("Would you like to wait for 5 minutes for monitoring to start (y or n or exit): ", end='')
     user_input = input()
@@ -80,20 +84,15 @@ try:
         if user_input == 'y' or user_input == 'Y':
             print('Great come back in 5 minutes to see your monitor readings .....')
             print('\nWhile we are waiting for monitor results to be returned we will create your webpage')
-             # send data to create the webpage
-            webpage.create_index_html_page(key_name, public_ip_address, bucket_details)
-
             time.sleep(260)
-            subprocess.run('./monitor.py %s'%instance.id, shell=True)
             invalid_input= False
+
         if user_input == 'n' or user_input == 'N':
             print ("\nYou can monitor your Instance at any time using your Instance ID: %s"%instance.id)
             print("by running the following command in the root directory of the program:\n")
             print("./monitor.py %s" %instance.id)    
-            print("\nCreating your webpage now")
-             # send data to create the webpage
-            webpage.create_index_html_page(key_name, public_ip_address, bucket_details)
-
+               
+            invalid_input = False
     
 
 except (Exception) as error:

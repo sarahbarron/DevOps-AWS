@@ -94,6 +94,20 @@ def find_available_security_groups():
         # Filter all security groups 
         # that have ssh access
         # and have the default vpc
+
+        default_vpcs = ec2.vpcs.filter(
+            Filters=[
+                {
+                    'Name': 'isDefault',
+                    'Values': [
+                        'true'
+                    ] 
+                },
+            ]
+        )
+        for vpc in default_vpcs:
+            vpc_id = vpc.id
+             
         security_group_list = ec2.security_groups.filter(
 
             Filters=[
@@ -111,8 +125,10 @@ def find_available_security_groups():
                 },
                 {
                     'Name': 'vpc-id',
-                    'Values': [
-                        'vpc-91a988f7'
+                    'Values': 
+                    [
+                        vpc_id
+                        # 'vpc-91a988f7'
                     ],
                 },
             ],

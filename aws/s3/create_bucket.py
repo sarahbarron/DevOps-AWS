@@ -50,11 +50,11 @@ Check the regex of the bucket name
 """
 def check_bucket_name_regex(bucket_name):
 
-    # check that is not formatted as an IP address
+    # check if its formatted as an IP address
     if re.search(r'^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$', bucket_name):
         return True
 
-    # check that it follows all other rules of bucket names
+    # check if it follows the correct Regex for a S3 Bucket Name
     if re.search(r'^[a-z0-9]{1}[a-z0-9-.]{1,61}[a-z0-9]{1}$', bucket_name):
         return False
     
