@@ -46,15 +46,12 @@ def create_new_key_pair(keypair_name):
 
     except (Exception) as error:
         if '(InvalidKeyPair.Duplicate)' in str(error):
-            print ('\n %s this keypair already exists and will be used again to create this instance' %(keypair_name))
+            print ('\n%sThis keypair already exists and will be used again to create this instance' %(keypair_name))
             return key_name
         else:
             print(error)
     except(KeyboardInterrupt):
         sys.exit("\n\nProgram exited")
-
-
-
 
 
 
@@ -64,16 +61,18 @@ Method Counts the number of existing keypairs
 
 '''
 def count_existing_keypairs():
-    
-    existing_key_pair_list = ec2.key_pairs.all()
-    num_existing_key_pair = 0
+    try:
+        existing_key_pair_list = ec2.key_pairs.all()
+        num_existing_key_pair = 0
 
-    for kp in existing_key_pair_list:
-       num_existing_key_pair += 1
-    
-    return num_existing_key_pair
-
-
+        for kp in existing_key_pair_list:
+            num_existing_key_pair += 1
+        
+        return num_existing_key_pair
+    except (Exception) as error:
+        print(error)
+    except(KeyboardInterrupt):
+        sys.exit("\n\nProgram exited")
 
 
 
@@ -83,15 +82,17 @@ Method Prints a list of exisiting key pairs
 
 '''
 def print_exisiting_keypairs():
-    existing_key_pair_list = ec2.key_pairs.all()
-    print('\n-------------------------------------------------------------------------------------')
-    print(' Existing Key Pairs')
-    print('\n-------------------------------------------------------------------------------------')
-    for kp in existing_key_pair_list:
-        print(kp.name)
-    print('\n-------------------------------------------------------------------------------------')
-
-
+    try:
+        existing_key_pair_list = ec2.key_pairs.all() 
+        print('\n--------------------------------------------------------------------------------------------------------')
+        print('Existing Key Pairs \n')
+        for kp in existing_key_pair_list:
+            print(kp.name)
+        print('\n--------------------------------------------------------------------------------------------------------')
+    except (Exception) as error:
+        print(error)
+    except(KeyboardInterrupt):
+        sys.exit("\n\nProgram exited")
 
 
 
@@ -105,44 +106,48 @@ otherwise return the string duplicate! (use ! as this can not be in a key pair n
 '''
 def check_if_keypair_is_duplicate(user_input):
 
-    existing_key_pair_list = ec2.key_pairs.all()
+    try:
+        existing_key_pair_list = ec2.key_pairs.all()
 
-    # convert to lower case for the comparison
-    user_input_lower = user_input.lower()
+        # convert to lower case for the comparison
+        user_input_lower = user_input.lower()
 
-    for kp in existing_key_pair_list:
-        kp_lower = kp.name.lower()
-        if kp_lower == user_input_lower:
-            return kp.name
+        for kp in existing_key_pair_list:
+            kp_lower = kp.name.lower()
+            if kp_lower == user_input_lower:
+                return kp.name
 
-    return 'duplicate!'
-
-
-
+        return 'duplicate!'
+    except (Exception) as error:
+        print(error)
+    except(KeyboardInterrupt):
+        sys.exit("\n\nProgram exited")
 
 
 
 '''
-
 Function to check a users input for using an existing keypair is correct
-
 '''
 def check_input_is_in_keypair_list(user_input):
     
-    existing_key_pair_list = ec2.key_pairs.all()
+    try:
+        existing_key_pair_list = ec2.key_pairs.all()
 
-    # convert to lower case to compare
-    user_input_lower = user_input.lower()
+        # convert to lower case to compare
+        user_input_lower = user_input.lower()
 
-    for kp in existing_key_pair_list:
-        kp_lower = kp.name.lower()
+        for kp in existing_key_pair_list:
+            kp_lower = kp.name.lower()
 
-        if kp_lower == user_input_lower:
-            return kp.name
+            if kp_lower == user_input_lower:
 
-    return 'DOES NOT EXIST!'
+                return kp.name
 
-
+        return 'DOES NOT EXIST!'
+    except (Exception) as error:
+        print(error)
+    except(KeyboardInterrupt):
+        sys.exit("\n\nProgram exited")
 
 
 
@@ -157,14 +162,12 @@ def check_keypair_regex(user_input):
             return False
         
         else:
-            print('\n Invalid key pair Name \n')
+            print('\nINVALID Key Pair Name \n')
             return True
     except (Exception) as error:
         print(error)
     except(KeyboardInterrupt):
         sys.exit("\n\nProgram exited by keyboard interupt")
-
-
 
 
 
@@ -189,8 +192,6 @@ def get_key_name(keypair):
 
 
 
-
-
 '''
 
 Setup Key Pair Method
@@ -198,20 +199,15 @@ Setup Key Pair Method
 '''
 def setup_keypair_name():
     try:
-        print('\n-------------------------------------------------------------------------------------')
-        print('  SETUP KEY PAIR')
-        print('\n-------------------------------------------------------------------------------------')
-            
         outer_invalid_input = True
 
         while(outer_invalid_input):
-            print ('\n YOU CAN ENTER EXIT AT ANY STAGE TO EXIT THE PROGRAM \n\n')
             # If there are exisiting keypairs available ask the user would they like to 
             # use an existing key pair
             # If there are no exisiting keypairs move on to create an instance
             num_existing_keypairs = count_existing_keypairs()
             if num_existing_keypairs > 0:
-                print('\nWould you like to use an existing key pair (y or n or press enter for default value): ', end='')
+                print('\nKEYPAIR: Would you like to use an existing key pair (y or n or press enter for default value): ', end='')
                 use_existing_kp = input()
                 checkForExit(use_existing_kp)
             else:
@@ -221,42 +217,47 @@ def setup_keypair_name():
             # If the user enters y ask them to enter the name of the keypair they want to use
             # check that their input is valid
             if use_existing_kp == 'y' or use_existing_kp == 'Y':
-                
-                inner_invalid_input = True
-
-                while inner_invalid_input:
-                    # Print the available key pairs
-                    print_exisiting_keypairs()
-            
-                    print ('\nEnter the name of the keypair you want to use from the list: ', end='')
+                # Print the available key pairs
+                print_exisiting_keypairs()
+                print('Please ensure the .pem file of the keypair you choose from the list above is stored in the Assignment1 Directory')
+                while True:
+                    print ('\nEnter the name of the keypair you want to use from the list(or press enter to create a new one): ', end='')
                     user_input = input()
+                    if len(user_input) == 0:
+                        use_existing_kp = 'n'
+                        break
                     checkForExit(user_input)
                     # If the user has entered .pem remove it 
                     keypair_name = get_key_name(user_input)
                 
                     # check the user has entered the correct key pair name 
                     keypair_name = check_input_is_in_keypair_list(keypair_name)
-                  
-                    # if the user hasn't entered the correct keypair name the string 'DOES NOT EXIST!' is returned
-                    if keypair_name == 'DOES NOT EXIST!':
-                        print('\nYou have entered an incorrect key pair name\n')
-                    # if the user has entered a correct key pair name exit and return the keypair name
+
+                    # check the keypair is located in the Assignment1 folder
+                    stored_locally = subprocess.check_output('ls | grep %s | wc -l' %keypair_name, shell=True)
+                    if int(stored_locally) > 0:
+                        # if the user hasn't entered the correct keypair name the string 'DOES NOT EXIST!' is returned
+                        if keypair_name == 'DOES NOT EXIST!':
+                            print('\nYou have entered an incorrect key pair name\n')
+                        # if the user has entered a correct key pair name exit and return the keypair name
+                        else:
+                            outer_invalid_input = False
+                            break
                     else:
-                        inner_invalid_input = False
-                        outer_invalid_input = False
-        
+                        print("\n%s is not stored in the Assignment1 directory" %keypair_name)
             # If there are no existing key pairs or the user wants to create a new key pair 
-            elif use_existing_kp == 'n' or use_existing_kp == 'N':
+            if use_existing_kp == 'n' or use_existing_kp == 'N':
 
                 inner_invalid_input = True
 
                 while inner_invalid_input:
+                    
                     bad_keypair_name = True
 
                     # Get user input for a key pair name and check the regex is correct
                     while bad_keypair_name:
 
-                        print ('\nkey pair names can be up to 255 characters long. Valid characters include _ - a-z A-Z and 0-9')
+                        print ('\nCREATE KEY PAIR NAME: Valid characters include _ - a-z A-Z and 0-9 with a max of 255 characters')
                         print('\nEnter a unique key pair name (press enter for a default name): ', end='')
                         user_input = input()
                         checkForExit(user_input)
@@ -283,28 +284,26 @@ def setup_keypair_name():
                         
                         # Otherwise the key pair already exists ask they user would they like to use the existing one
                         else:
-                            invalid_input = True
-                            while invalid_input:
-                                print('The key pair name you have entered already exists')
-                                print('would you like to use the existing key pair y or n?', end='')
+                            while True:
+                                print('\nThe key pair name you have entered already exists')
+                                print('Would you like to use the existing key pair y or n?', end='')
                                 user_input = input()
                                 checkForExit(use_existing_kp)
                                 # If the user chooses to use the existing one exit loops and return the keypair_name
                                 if user_input == 'y' or user_input == 'Y':
-                                    invalid_input = False
                                     already_exists = False
                                     inner_invalid_input = False
                                     outer_invalid_input = False
                                     keypair_name = existing_keypair_name
-                                
+                                    break
                                 # If they choose n return to the start an ask the user to input a key pair name
                                 elif user_input == 'n' or user_input == 'N':
-                                    invalid_input = False
                                     already_exists = False
+                                    break
                                 
                                 # otherwise the input has been invalid so print this message
                                 else:
-                                    print('Invalid input you must enter y or n')
+                                    print('\nInvalid input you must enter y or n')
 
             # If user enters enter use the default value
             elif use_existing_kp == '' or use_existing_kp == '':                       
@@ -314,9 +313,7 @@ def setup_keypair_name():
                 outer_invalid_input = False
 
             else:
-                print ('Invalid input please enter y or n')
-
-        print('keypair name being used: %s' % keypair_name)
+                print ('\nInvalid input please enter y or n')
         
         return keypair_name
     except (Exception) as error:

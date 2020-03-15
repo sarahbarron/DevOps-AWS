@@ -128,7 +128,6 @@ def find_available_security_groups():
                     'Values': 
                     [
                         vpc_id
-                        # 'vpc-91a988f7'
                     ],
                 },
             ],
@@ -180,6 +179,8 @@ with valid characters, using regex
 
 def check_regex(input):
     try:
+        if re.search(r'^sg-', input):
+            return True
         if re.search(r'^[._\-:/()#,@[\]\+=&;{}!$\* a-zA-Z0-9]{1,255}$', input):
             return False
         
@@ -198,19 +199,15 @@ and the method returns the security group ID
 def setup_security_group():
 
     invalid_input = True
-    invalid_security_group = True
+    
     available_security_groups = False
     list_security_groups = []
     group_name_is_duplicate = True
     invalid_regex = True
 
-    print('\n-------------------------------------------------------------------------------------')
-    print('  SETUP SECURITY GROUP')
-    print('\n-------------------------------------------------------------------------------------')
-    
+     
     try:
         
-        print("\n YOU CAN ENTER EXIT AT ANY STAGE TO EXIT THE PROGRAM\n\n")
         while (invalid_input):
 
             # returns a list off valid security groups
@@ -221,7 +218,7 @@ def setup_security_group():
             # if there is a valid security group available ask the user do they want to 
             # use an existing security group 
             if len(list_security_groups) > 0:
-                print('Do you want to use an existing security group (y/n or enter to use default)', end='')
+                print('\nSECURITY GROUP: Do you want to use an existing security group (y/n or enter to use default): ', end='')
                 yes_no = input()
                 checkForExit(yes_no)
 
@@ -232,16 +229,15 @@ def setup_security_group():
             # If the user wants to use an existing security group print the list of security groups
             # and ask the user to input the id of the user group they want to use
             if yes_no == 'y':
-                
-                while invalid_security_group:
-                    print('\n-------------------------------------------------------------------------------------')
-                    print('\nValid Security Group IDs: \n')
+                print('\n--------------------------------------------------------------------------------------------------------')
+                print('\nValid Security Group IDs: \n')
 
-                    for sg in list_security_groups:
-                        print(sg)
+                for sg in list_security_groups:
+                    print(sg)
                     
-                    print('\n-------------------------------------------------------------------------------------')
+                print('\n--------------------------------------------------------------------------------------------------------')
 
+                while True:
                     print('\nFrom the list above enter the ID of the security group you want to use: ', end='')
                     security_group_id = input()
                     checkForExit(security_group_id)
@@ -249,19 +245,17 @@ def setup_security_group():
                     # if the user enters a valid security group exit the loop
                     if security_group_id in list_security_groups:                            
                         invalid_input = False 
-                        invalid_security_group = False
+                        break
                        # security_group = ec2.SecurityGroup(security_group_id)
                     # If the user enters an invalid security group id continue to ask 
                     # the user for a valid id
                     else:
-                        print('\nThis is an invalid security group ID \n')
+                        print('\nINVALID security group ID \n')
             
             # If there are no valid security groups available or the user wishes to
             # create a security group. Ask the user for a group name and description
             elif yes_no == 'n':
                 
-                print('Lets create a new security group \n')
-
                 # If the user enters a group name with invalid 
                 # characters the user will be asked to enter a new valid group name
                 while (invalid_regex):
@@ -273,7 +267,7 @@ def setup_security_group():
                     # the user will be asked to enter another group name
                     while (group_name_is_duplicate):
                     
-                        print('Enter A Group Name (or press enter to use default): ', end='')
+                        print('\nSECURITY GROUP: Enter A Group Name (or press enter to use default): ', end='')
                         group_name = input()
                         checkForExit(group_name)
 
