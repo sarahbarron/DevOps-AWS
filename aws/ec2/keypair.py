@@ -96,37 +96,9 @@ def print_exisiting_keypairs():
 
 
 
-'''
-
-Method to check if the key pair entered by the user is a duplicate
-If it is a duplicate the original key pair name is returned
-as it is an exact match (case sensitive)
-otherwise return the string duplicate! (use ! as this can not be in a key pair name) 
 
 '''
-def check_if_keypair_is_duplicate(user_input):
-
-    try:
-        existing_key_pair_list = ec2.key_pairs.all()
-
-        # convert to lower case for the comparison
-        user_input_lower = user_input.lower()
-
-        for kp in existing_key_pair_list:
-            kp_lower = kp.name.lower()
-            if kp_lower == user_input_lower:
-                return kp.name
-
-        return 'duplicate!'
-    except (Exception) as error:
-        print(error)
-    except(KeyboardInterrupt):
-        sys.exit("\n\nProgram exited")
-
-
-
-'''
-Function to check a users input for using an existing keypair is correct
+Function to check if the user input is in the list of available keypairs
 '''
 def check_input_is_in_keypair_list(user_input):
     
