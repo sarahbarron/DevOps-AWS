@@ -58,7 +58,7 @@ sudo chmod 777 /var/www/html/index.html
         logging.info('EC2 Instance Created : %s'%inst_id)
         
         print("\nCreating a new EC2 Instance with:\nKEY PAIR: %s,\nSECURITY GROUP: %s,\nTAG: %s." %(key_name, security_group_id, tag_value ))
-        print("\nPlease be patient as this could take a few minutes .....")
+        print("\nPlease be patient as we create your EC2 instance. This could take a few minutes .....")
         
         # wait for the instance to be running
         inst.wait_until_running()

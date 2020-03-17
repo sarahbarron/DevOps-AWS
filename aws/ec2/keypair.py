@@ -242,7 +242,7 @@ def setup_keypair_name():
                     keypair_name = check_input_is_in_keypair_list(keypair_name)
 
                     # check the keypair is located in the Assignment1 folder
-                    stored_locally = subprocess.check_output('ls | grep %s | wc -l' %keypair_name, shell=True)
+                    stored_locally = subprocess.check_output('ls|grep -s %s|wc -l' %keypair_name, shell=True)
             
                     if int(stored_locally) > 0:
                         logging.info('%s is stored locally' %keypair_name)
@@ -273,7 +273,7 @@ def setup_keypair_name():
                 while inner_invalid_input:
 
                     # valid keypair name loop trigger set to True to start        
-                    valid_keypair_name = True
+                    valid_keypair_name = False
 
                     # Get user input for a key pair name and check the regex is correct
                     while not valid_keypair_name:
@@ -354,6 +354,7 @@ def setup_keypair_name():
                 print ('\nInvalid input please enter y or n')
 
         logging.info('Keypair %s Created'%keypair_name)
+        print('\nKeypair: %s'%keypair_name)
         return keypair_name
 
     except (Exception) as error:

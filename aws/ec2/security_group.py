@@ -70,7 +70,7 @@ def create_security_group(GroupName, Description):
         # load the security group
         security_group.load()
         
-        logging.info('Inbound access for SSH, HTTP and HTTPS added to the security group')
+        logging.info('Inbound access for SSH, HTTP and HTTPS added to the security group id %s'%security_group.id)
 
         print('\nCreated Security Group ID : %s'%security_group.id)
         # return the security group id
@@ -88,6 +88,30 @@ the instance. The Security group must have SSH inbound access
 and belong to the default vpc
 Returns a list of all valid security groups
 '''
+
+def find_existing_security_group_id(groupname):
+    try:
+        security_group = ec2.security_groups.filter(
+
+            Filters=[
+                {
+                    'Name': 'group-name',
+                    'Values': [groupname]   
+                }
+            ],
+            
+        )
+
+        security_group_id = list(security_group)[0].id
+
+        logging.info('security group id returned')
+        # return a list of security group objects
+        return security_group_id
+
+    except (Exception) as error:
+        logging.error(error)
+    except(KeyboardInterrupt):
+        sys.exit("\n\nProgram exited by keyboard interupt")
 
 def find_available_security_groups():
     try:
@@ -248,7 +272,7 @@ def setup_security_group():
     list_security_groups = []
     group_name_is_duplicate = True
     valid_regex = False
-
+    use_existing = False
      
     try:
         
@@ -335,7 +359,14 @@ def setup_security_group():
                         # if the group name is a default print the message to warn the user
                         if group_name_is_duplicate:
                             logging.warning('Duplicate security group name entered')
-                            print('This is a Duplicate group name. Please enter a unique group name')
+                            print('\nThe Security Group name you have entered already exists')
+                            print('Would you like to use the existing Security Group y or n? ', end='')
+                            user_input = input()
+
+                            if user_input == 'y' or user_input =='Y':
+                                security_group_id = find_existing_security_group_id(group_name)
+                                use_existing = True
+                                break
                         
                         # Otherwise the user has entered a valid group name so break the loop
                         else:
@@ -353,7 +384,7 @@ def setup_security_group():
                 # initially set valid regex to false until fist loop is done
                 valid_regex = False
                 # Continue to loop until the user enters a description with correct regex
-                while not valid_regex:
+                while not valid_regex and not use_existing:
                     
                     print('Enter A Description (or press enter to use default): ', end='')
                     description = input()
@@ -372,11 +403,13 @@ def setup_security_group():
                         print('._-:()#,@[\]+=&;{\}!$\* a-z A-Z 0-9 ')
                     
 
-                logging.info('Description %s has be set'% description)
+               
 
                 # once a valid group name and description have been obtained
                 # create the new security group
-                security_group_id = create_security_group(group_name, description)
+                if not use_existing:
+                    security_group_id = create_security_group(group_name, description)
+                    logging.info('Security Group Id: %s created'%security_group_id)
 
                 # exit the loop
                 invalid_input = False
