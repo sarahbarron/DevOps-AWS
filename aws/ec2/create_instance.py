@@ -2,7 +2,6 @@
 import boto3
 import sys
 import subprocess
-import socket
 import time
 import logging
 
