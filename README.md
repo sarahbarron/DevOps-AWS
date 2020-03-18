@@ -61,9 +61,13 @@ _____________
 
 - run the command `./run_newwebserver.py`
 
-- When the run_newwebserver.py program has completed you can then run the monitor program from the same directory (Assignment1)
+- When the run_newwebserver.py program has completed you can then run the monitor program from the same directory (Assignment1). You can run it two ways the first way:
 
-- run the command `./aws/cloudwatch/monitor.py`
+  `./aws/cloudwatch/monitor.py`
+
+   The second way is by passing the instance id as a parametere
+
+   `./aws/cloudwatch/monitor.py instanceid`
 
 _______________
 ### What I completed
