@@ -57,11 +57,11 @@ __________
 _____________
 ### Running the program
 
-- Open a terminal window inside the Assignment1 directory
+- Open a terminal window inside the root directory
 
 - run the command `./run_newwebserver.py`
 
-- When the run_newwebserver.py program has completed you can then run the monitor program from the same directory (Assignment1). You can run it two ways the first way:
+- When the run_newwebserver.py program has completed you can then run the monitor program from the same root directory. You can run it two ways the first way:
 
   `./aws/cloudwatch/monitor.py`
 
